@@ -19,12 +19,12 @@ etl.ipnb | 测试注解
 注解| 说明 | 形如
 ---|---|---
 Select | 过滤 | select {field} from {table} {filter}
-SubQuery | 子查询 | select field from (select * from table) alias
+SubQuery | 子查询 | select {field} from ({subquery}) {alias}
 Aggregate | 聚合 | {subquery} {group}
-AggregateSel | 过滤并聚合 | select {field} from {table} {filter} {group}
+AggregateSel | 过滤再聚合 | select {field} from {table} {filter} {group}
 Join | 表连接 | select {field} from ({before}) {before_alias} \[right&#124;left&#124;inner\] join ({after}) {after_alias} on({on})
 SelectMap | 过滤再映射 | select {field_map} from (select {field} from {table} where {filter}) {alias}
 Map | 映射| select mapper from ({subquery}) {alias}
 InsertOverWrite | 插入hive表 | INSERT OVERWRITE TABLE {table} {partition} {select}
 
-> 注意：**{}** 符号，标识注解传入的参数
+> 注意：**{}** 符号，表示注解传入的参数
