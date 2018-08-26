@@ -18,11 +18,11 @@ etl.ipnb | 测试注解
 # SQL注解
 注解| 说明
 ---|---
-select | select {field} from {table} {filter}
-subquery | select field from (select * from table) alias
+Select | select {field} from {table} {filter}
+SubQuery | select field from (select * from table) alias
 Aggregate | {sub-query} {group}
 AggregateSel | select {field} from {table} {filter} {group}
 Join | select {field} from ({before}) {before_alias} \[right&#124;left&#124;inner\] join ({after}) {after_alias} on({on})
-selectMap | select field_map from (select field from table where f) alias
+SelectMap | select field_map from (select field from table where f) alias
 Map | select mapper from (sub-query) alias
 InsertOverWrite | INSERT OVERWRITE TABLE {table} {partition} {select}
