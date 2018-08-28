@@ -46,14 +46,14 @@ InsertOverWrite | 插入hive表 | INSERT OVERWRITE TABLE {table} {partition} {se
 Id_P	| LastName	| FirstName	| Address	| City
 ---|---|---|---|---
 1	| Adams	| John	| Oxford | Street London
-- | - | - | - | - 
+-|-|-|-|- 
 
 - Orders 表
 
 Id_O	| OrderNo	| Id_P
 ---|---|---
 1	| 77895	| 3
-- | - | -
+-|-|-
 
 
 ## Select和SubQuery注解注解
@@ -63,7 +63,7 @@ def table():
     return 'Persons'
 ```
 结果：
-```
+```sql
 select Id_P,LastName,FirstName from Persons WHERE 1=1
 ```
 ## AggregateSel注解
@@ -73,7 +73,7 @@ def Persons():
     return 'Orders'
 ```
 结果：
-```
+```sql
 select Id_P,count(*) from Orders WHERE 1=1 GROUP BY Id_P
 ```
 
@@ -104,7 +104,7 @@ def join(before_field=[], after_field=[]):
 s3 = join()
 ```
 结果：
-```
+```sql
 select t1.OrderNo,concat(t2.FirstName, t2.LastName) as name from (select * from Orders ) t1
     join (select * from Persons ) t2 on(t1.Id_P=t2.Id_P)
 ```
@@ -129,6 +129,6 @@ def mapper():
 s2 = mapper()
 ```
 结果：
-```
+```sql
 select id,start_date,len,concat(',', d1, d2) from (select id,start_date,len,d1,d2 from (select id,start_date,len,split(y) as y from (select id,start_date,len,regexp_replace(regexp_replace(y, '\\]', ''), '\\[', '') as y from mytable WHERE type='ttt' and key='sales') t1) t2) t2
 ```
