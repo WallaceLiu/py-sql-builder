@@ -59,7 +59,7 @@ Id_O	| OrderNo	| Id_P
 ## Select和SubQuery注解注解
 ```python
 @Select(field=['Id_P', 'LastName', 'FirstName'], f=["1=1"])
-def table():
+def persons():
     return 'Persons'
 ```
 结果：
