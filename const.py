@@ -2,11 +2,11 @@
 """
 Created on Tue Jun 27 15:29:37 2017
 
-@author: liuning800203@aliyun.com
+@author: liuning11@jd.com
 
 
 """
-__author__ = 'liuning800203@aliyun.com'
+__author__ = 'liuning11@jd.com'
 
 # 符号
 # 空格

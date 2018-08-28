@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-__author__ = 'liuning800203@aliyun.com'
+__author__ = 'liuning11@jd.com'
 
 from functools import wraps
 from const import BLANK_SPACE, BLANK, COMMA, FULL_STOP, SQL_WHERE, SQL_GROUP_BY, SQL_PARTITION
 
-
-class EtlBase(object):
+class SqlBuilderBase(object):
     __WHERE = SQL_WHERE + BLANK_SPACE
     __GROUP = SQL_GROUP_BY + BLANK_SPACE
     __PARTITION = SQL_PARTITION
@@ -35,7 +34,7 @@ class EtlBase(object):
         if isinstance(v, str):
             return False if v is None or len(v) <= 0 else True
         else:
-            raise TypeError('Type Error, v is str.')
+            raise TypeError('Type Error, v is string.')
 
     @staticmethod
     def concat_list_by_sep(v, sep):
@@ -52,8 +51,8 @@ class EtlBase(object):
         :param sep:
         :return:
         """
-        return BLANK if not EtlBase.check_list(v) \
-            else EtlBase.__GROUP + EtlBase.concat_list_by_sep(v, sep)
+        return BLANK if not SqlBuilderBase.check_list(v) \
+            else SqlBuilderBase.__GROUP + SqlBuilderBase.concat_list_by_sep(v, sep)
 
     @staticmethod
     def filter(v):
@@ -62,8 +61,8 @@ class EtlBase(object):
         :param v:
         :return:
         """
-        return BLANK if not EtlBase.check_list(v) \
-            else EtlBase.__WHERE + EtlBase.concat_list_by_sep(v, BLANK_SPACE)
+        return BLANK if not SqlBuilderBase.check_list(v) \
+            else SqlBuilderBase.__WHERE + SqlBuilderBase.concat_list_by_sep(v, BLANK_SPACE)
 
     @staticmethod
     def field(v, alias=None):
@@ -73,12 +72,12 @@ class EtlBase(object):
         :param alias:
         :return:
         """
-        if EtlBase.check_list(v):
+        if SqlBuilderBase.check_list(v):
             if alias is None or len(alias) <= 0:
-                return EtlBase.concat_list_by_sep(v, COMMA)
+                return SqlBuilderBase.concat_list_by_sep(v, COMMA)
             else:
                 field = [alias + FULL_STOP + f for f in v]
-                return EtlBase.concat_list_by_sep(field, COMMA)
+                return SqlBuilderBase.concat_list_by_sep(field, COMMA)
         else:
             return v
 
@@ -89,8 +88,8 @@ class EtlBase(object):
         :param v:
         :return:
         """
-        if EtlBase.check_list(v):
-            return EtlBase.concat_list_by_sep(v, BLANK_SPACE)
+        if SqlBuilderBase.check_list(v):
+            return SqlBuilderBase.concat_list_by_sep(v, BLANK_SPACE)
         else:
             return v
 
@@ -101,13 +100,13 @@ class EtlBase(object):
         :param partition:
         :return:
         """
-        if EtlBase.check_list(partition):
-            return "{}({})".format(EtlBase.__PARTITION, EtlBase.concat_list_by_sep(partition, COMMA))
+        if SqlBuilderBase.check_list(partition):
+            return "{}({})".format(SqlBuilderBase.__PARTITION, SqlBuilderBase.concat_list_by_sep(partition, COMMA))
         else:
             return BLANK
 
 
-class Select(EtlBase):
+class Select(SqlBuilderBase):
     """
     select field from table where f
     """
@@ -132,7 +131,7 @@ class Select(EtlBase):
         return wrapped
 
 
-class SubQuery(EtlBase):
+class SubQuery(SqlBuilderBase):
     """
     子查询语句
 
@@ -159,7 +158,7 @@ class SubQuery(EtlBase):
         return wrapped
 
 
-class Aggregate(EtlBase):
+class Aggregate(SqlBuilderBase):
     """
     聚合子查询
     """
@@ -190,25 +189,21 @@ class Aggregate(EtlBase):
         return wrapped
 
 
-class AggregateSel(EtlBase):
+class AggregateSel(SqlBuilderBase):
     """
     直接聚合
     """
     _template = """select {field} from {table} {filter} {group}"""
 
-    def __init__(self, field, f, aggr, group):
+    def __init__(self, field, f, group):
         self._field = field
-        self._aggr = aggr
         self._filter = f
         self._group = group
 
     def __call__(self, fn):
         @wraps(fn)
-        def wrapped(*args, **kwargs):
-            aggr_field = self._field
-            for agg in self._aggr:
-                aggr_field = ["{}({})".format(agg, f) for f in aggr_field]
-            return self._template.format(field=Aggregate.field(aggr_field),
+        def wrapped(*args, **kwargs):            
+            return self._template.format(field=AggregateSel.field(self._field),
                                          table=fn(*args, **kwargs),
                                          filter=AggregateSel.filter(self._filter),
                                          group=AggregateSel.group_by(self._group))
@@ -216,7 +211,7 @@ class AggregateSel(EtlBase):
         return wrapped
 
 
-class Join(EtlBase):
+class Join(SqlBuilderBase):
     """
     连接，包括等值、左连接、右连接、内连接
     """
@@ -280,7 +275,7 @@ class Join(EtlBase):
         return wrapped
 
 
-class InsertOverWrite(EtlBase):
+class InsertOverWrite(SqlBuilderBase):
     """
     INSERT OVERWRITE hive表
     """
@@ -308,7 +303,7 @@ class InsertOverWrite(EtlBase):
         return wrapped
 
 
-class SelectMap(EtlBase):
+class SelectMap(SqlBuilderBase):
     """
     select and map 语句
     形如：
@@ -341,7 +336,7 @@ class SelectMap(EtlBase):
         return wrapped
 
 
-class Map(EtlBase):
+class Map(SqlBuilderBase):
     """
     Map 映射函数
     """
