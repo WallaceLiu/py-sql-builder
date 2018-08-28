@@ -67,7 +67,7 @@ def table():
 select Id_P,LastName,FirstName from Persons WHERE 1=1
 ```
 ## AggregateSel注解
-```
+```python
 @AggregateSel(field=['Id_P','count(*)'], f=['1=1'], group=['Id_P'])
 def Persons():
     return 'Orders'
