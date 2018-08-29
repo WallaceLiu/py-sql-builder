@@ -184,7 +184,7 @@ class Aggregate(SqlBuilderBase):
                 return result['table']
 
             sql = _sql()
-            return self._template.format(subquer=sql, group=Aggregate.group_by(self._group))
+            return self._template.format(subquery=sql, group=Aggregate.group_by(self._group))
 
         return wrapped
 
